@@ -13,41 +13,21 @@ let untabify = function(text, tab_width = 8, marker = '') {
 
     let sp = (count) => spaces(count, marker)
 
-    let expanded = []
-    text.split('\n').forEach( line => {
-	if (!line.length) {
-	    expanded.push('')
-	    return
-	}
+    return text.split('\n').map( line => {
+	if (!line.length) return ''
 
-	let r = []
 	let chunks = line.split('\t')
-	chunks.forEach( (chunk, idx) => {
-	    if (!chunk.length) {
-		r.push(sp(tab_width))
-		return
-	    }
-
-	    if (idx === chunks.length - 1) {
-		r.push(chunk)
-		return
-	    }
-
-	    if (chunk.length === tab_width) {
-		r.push(chunk)
-		return
-	    }
+	return chunks.map( (chunk, idx) => {
+	    if (!chunk.length) return sp(tab_width)
+	    if (idx === chunks.length - 1) return chunk
+	    if (chunk.length === tab_width) return chunk
 
 	    // a weird case
-	    if (chunk.length === tab_width - 1) {
-		r.push(chunk + sp(tab_width-chunk.length + tab_width))
-		return
-	    }
+	    if (chunk.length === tab_width - 1)
+		return (chunk + sp(tab_width-chunk.length + tab_width))
 
-	    if (chunk.length < tab_width) {
-		r.push(chunk + sp(tab_width-chunk.length))
-		return
-	    }
+	    if (chunk.length < tab_width)
+		return (chunk + sp(tab_width - chunk.length))
 
 	    let re = new RegExp(`.{${tab_width}}`)
 	    let peaces = chunk.split(re)
@@ -55,13 +35,10 @@ let untabify = function(text, tab_width = 8, marker = '') {
 	    let sp_count = last_peace.length === tab_width - 1 ?
 		tab_width-last_peace.length + tab_width : // a weird case
 		tab_width-last_peace.length
-	    r.push(chunk + (last_peace.length ? sp(sp_count) : ''))
-	})
+	    return (chunk + (last_peace.length ? sp(sp_count) : ''))
+	}).join('')
 
-	expanded.push(r.join(''))
-    })
-
-    return expanded.join('\n')
+    }).join('\n')
 }
 
 exports.untabify = untabify
