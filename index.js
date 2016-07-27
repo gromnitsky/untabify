@@ -11,32 +11,13 @@ let untabify = function(text, tab_width = 8, marker = '') {
     if (!text) return ''
     if (tab_width < 2) tab_width = 2
 
-    let sp = (count) => spaces(count, marker)
-
     return text.split('\n').map( line => {
-	if (!line.length) return ''
-
-	let chunks = line.split('\t')
-	return chunks.map( (chunk, idx) => {
-	    if (!chunk.length) return sp(tab_width)
-	    if (idx === chunks.length - 1) return chunk
-	    if (chunk.length === tab_width) return chunk
-
-	    // a weird case
-	    if (chunk.length === tab_width - 1)
-		return (chunk + sp(tab_width-chunk.length + tab_width))
-
-	    if (chunk.length < tab_width)
-		return (chunk + sp(tab_width - chunk.length))
-
-	    let re = new RegExp(`.{${tab_width}}`)
-	    let peaces = chunk.split(re)
-	    let last_peace = peaces[peaces.length-1]
-	    let sp_count = last_peace.length === tab_width - 1 ?
-		tab_width-last_peace.length + tab_width : // a weird case
-		tab_width-last_peace.length
-	    return (chunk + (last_peace.length ? sp(sp_count) : ''))
-	}).join('')
+	let offset = 0
+	return line.replace(/\t/g, (_, idx) => {
+	    let max = tab_width - (idx + offset) % tab_width
+	    offset += max - 1
+	    return spaces(tab_width, marker).slice(0, max)
+	})
 
     }).join('\n')
 }
@@ -68,9 +49,9 @@ if (__filename === process.argv[1]) {
     assert.equal('12345678', untabify('12345678'))
     assert.equal('12345678  ', untabify('12345678\t', 2))
     assert.equal('12345678        ', untabify('12345678\t'))
-    assert.equal('1234567         12345678        ',
-		 untabify('1234567\t12345678\t'))
-    assert.equal('123456781234567         1', untabify('123456781234567\t1'))
+    assert.equal('1234567 12345678        ',
+			 untabify('1234567\t12345678\t'))
+    assert.equal('123456781234567 1', untabify('123456781234567\t1'))
 
     assert.equal('12345678  \n12345678', untabify('12345678\t\n12345678', 2))
     assert.equal('12345678  \n\n12345678', untabify('12345678\t\n\n12345678', 2))
