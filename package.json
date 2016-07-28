@@ -1,6 +1,6 @@
 {
     "name": "untabify",
-    "version": "0.0.4",
+    "version": "0.0.5",
     "description": "Convert all tabs in a string to multiple spaces & vice versa, preserving columns",
     "main": "index.js",
     "repository": {
