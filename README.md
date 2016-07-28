@@ -1,6 +1,7 @@
 # untabify
 
-Convert all tabs in strings to multiple spaces, preserving columns.
+Convert all tabs in a string to multiple spaces & vice versa,
+preserving columns.
 
 	npm install untabify
 
@@ -45,13 +46,20 @@ which prints:
 .»      ..»     ...»    »       ....»   .....»  ......» ............»   .
 ~~~
 
+There is also `tabify()` as well. It works not like unexpand(1), but
+more like Emacs `tabify` function, i.e. it tries to preserve the
+visual formatting.
+
+~~~
+let assert = require('assert')
+let tabify = require('untabify').tabify
+
+assert.equal('      1\t1\t2', tabify('      1 1       2'))
+~~~
+
 ## Where are the tests?
 
 In the end of `index.js` file.
-
-## Where is `tabify()`?
-
-Not implemented!
 
 ## License
 

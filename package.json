@@ -1,7 +1,7 @@
 {
     "name": "untabify",
-    "version": "0.0.3",
-    "description": "Convert all tabs in strings to multiple spaces, preserving columns",
+    "version": "0.0.4",
+    "description": "Convert all tabs in a string to multiple spaces & vice versa, preserving columns",
     "main": "index.js",
     "repository": {
 	"type": "git",
@@ -10,7 +10,9 @@
     "keywords": [
 	"untabify",
 	"tabs",
-	"tabify"
+	"tabify",
+	"expand",
+	"unexpand"
     ],
     "author": "Alexander Gromnitsky <alexander.gromnitsky@gmail.com>",
     "license": "MIT",

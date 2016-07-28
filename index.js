@@ -22,10 +22,25 @@ let untabify = function(text, tab_width = 8, marker = '') {
     }).join('\n')
 }
 
-exports.untabify = untabify
-exports.tabify = function() {
-    throw new Error('not implemented')
+// according to the tests of unexpand(1), a single trailing space
+// should "not be converted to a tab, when before a field starting
+// with non blanks", so maybe we should adhere to that too in the
+// future if somebody will complain.
+let tabify = function(text, tab_width = 8) {
+    if (!text) return ''
+    if (tab_width < 2) tab_width = 2
+
+    let re = new RegExp(`.{1,${tab_width}}`, 'g')
+
+    return text.split('\n').map( line => {
+	return line.match(re).map( chunk => {
+	    return chunk.replace(/\s+$/, '\t')
+	}).join('')
+    }).join('\n')
 }
+
+exports.untabify = untabify
+exports.tabify = tabify
 
 // tests
 if (__filename === process.argv[1]) {
@@ -56,4 +71,7 @@ if (__filename === process.argv[1]) {
     assert.equal('12345678  \n12345678', untabify('12345678\t\n12345678', 2))
     assert.equal('12345678  \n\n12345678', untabify('12345678\t\n\n12345678', 2))
 
+    assert.equal('1\t', tabify('1       '))
+    assert.equal('      1\t1\t2', tabify('      1 1       2'))
+    assert.equal(t1, tabify(untabify(t1)))
 }
