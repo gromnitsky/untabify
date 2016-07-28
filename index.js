@@ -32,7 +32,7 @@ let tabify = function(text, tab_width = 8) {
 
     let re = new RegExp(`.{1,${tab_width}}`, 'g')
 
-    return text.split('\n').map( line => {
+    return untabify(text).split('\n').map( line => {
 	return line.match(re).map( chunk => {
 	    return chunk.replace(/\s+$/, '\t')
 	}).join('')
@@ -73,5 +73,7 @@ if (__filename === process.argv[1]) {
 
     assert.equal('1\t', tabify('1       '))
     assert.equal('      1\t1\t2', tabify('      1 1       2'))
+    assert.equal('\t1\t\t\t\t\t\t\t\t\t2\t3',
+		 tabify('        1\t\t\t\t\t\t\t\t\t2       3'))
     assert.equal(t1, tabify(untabify(t1)))
 }
