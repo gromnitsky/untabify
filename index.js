@@ -31,9 +31,12 @@ let tabify = function(text, tab_width = 8) {
     if (tab_width < 2) tab_width = 2
 
     let re = new RegExp(`.{1,${tab_width}}`, 'g')
-
-    return untabify(text).split('\n').map( line => {
-	return line.match(re).map( chunk => {
+    return untabify(text, tab_width).split('\n').map( line => {
+	let chunks = line.match(re)
+	return chunks.map( (chunk, idx) => {
+	    if (idx === chunks.length - 1 &&
+		chunk.match(/^\s*$/) &&
+		chunk.length < tab_width) return chunk
 	    return chunk.replace(/\s+$/, '\t')
 	}).join('')
     }).join('\n')
@@ -71,8 +74,11 @@ if (__filename === process.argv[1]) {
     assert.equal('12345678  \n12345678', untabify('12345678\t\n12345678', 2))
     assert.equal('12345678  \n\n12345678', untabify('12345678\t\n\n12345678', 2))
 
-    assert.equal('1\t', tabify('1       '))
+    assert.equal('1\t 1', tabify('1  1', 2))
+    assert.equal('1\t ', tabify('1  ', 2))
+    assert.equal('1\t\t', tabify('1   ', 2))
     assert.equal('      1\t1\t2', tabify('      1 1       2'))
+    assert.equal('     1\t2\t3', tabify('     1  2       3'))
     assert.equal('\t1\t\t\t\t\t\t\t\t\t2\t3',
 		 tabify('        1\t\t\t\t\t\t\t\t\t2       3'))
     assert.equal(t1, tabify(untabify(t1)))
